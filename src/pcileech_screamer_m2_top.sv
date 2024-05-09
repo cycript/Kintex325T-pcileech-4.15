@@ -21,9 +21,10 @@ module pcileech_screamer_m2_top #(
     input           ft601_clk,
     
     // SYSTEM LEDs and BUTTONs
-    output          user_ld1,
-    output          user_ld2,
-    
+    //output          user_ld1, // Lurker did not provide the pinout for this
+    //output          user_ld2, // Lurker did not provide the pinout for this
+    output          user_led,
+
     // PCI-E FABRIC
     output  [0:0]   pcie_tx_p,
     output  [0:0]   pcie_tx_n,
@@ -31,19 +32,20 @@ module pcileech_screamer_m2_top #(
     input   [0:0]   pcie_rx_n,
     input           pcie_clk_p,
     input           pcie_clk_n,
-    input           pcie_present,
+    //input           pcie_present,
     input           pcie_perst_n,
-    output reg      pcie_wake_n = 1'b1,
+    //output reg      pcie_wake_n = 1'b1,
     
     // TO/FROM FT601 PADS
-    output          ft601_rst_n,
+    //output          ft601_rst_n, // Lurker did not provide the pinout for this
+
     
     inout   [31:0]  ft601_data,
     output  [3:0]   ft601_be,
     input           ft601_rxf_n,
     input           ft601_txe_n,
     output          ft601_wr_n,
-    output          ft601_siwu_n,
+    //output          ft601_siwu_n,
     output          ft601_rd_n,
     output          ft601_oe_n
     );
@@ -78,11 +80,13 @@ module pcileech_screamer_m2_top #(
         tickcount64 <= tickcount64 + 1;
 
     assign rst = (tickcount64 < 64) ? 1'b1 : 1'b0;
-    assign ft601_rst_n = ~rst;
+    //assign ft601_rst_n = ~rst;
     wire led_pwronblink = tickcount64[24] & (tickcount64[63:27] == 0);
     
-    OBUF led_ld1_obuf(.O(user_ld1), .I(led_pcie));
-    OBUF led_ld2_obuf(.O(user_ld2), .I(led_com));
+    //OBUF led_ld1_obuf(.O(user_ld1), .I(led_pcie));
+    //OBUF led_ld2_obuf(.O(user_ld2), .I(led_com));
+    //OBUF led_ld1_obuf(.O(user_led), .I(led_pcie));
+    OBUF led_ld2_obuf(.O(user_led), .I(led_com));
     
     // ----------------------------------------------------
     // BUFFERED COMMUNICATION DEVICE (FT601)
@@ -102,7 +106,7 @@ module pcileech_screamer_m2_top #(
         .ft601_be           ( ft601_be              ),  // -> [3:0]
         .ft601_txe_n        ( ft601_txe_n           ),  // <-
         .ft601_rxf_n        ( ft601_rxf_n           ),  // <-
-        .ft601_siwu_n       ( ft601_siwu_n          ),  // ->
+        //.ft601_siwu_n       ( ft601_siwu_n          ),  // ->
         .ft601_wr_n         ( ft601_wr_n            ),  // ->
         .ft601_rd_n         ( ft601_rd_n            ),  // ->
         .ft601_oe_n         ( ft601_oe_n            )   // ->
@@ -121,7 +125,7 @@ module pcileech_screamer_m2_top #(
         .clk                ( clk                   ),
         .rst                ( rst                   ),
         .rst_cfg_reload     ( 1'b0                  ),
-        .pcie_present       ( pcie_present          ),
+        .pcie_present       ( 1'b0                  ), // 
         .pcie_perst_n       ( pcie_perst_n          ),
         // FIFO CTL <--> COM CTL
         .dcom               ( dcom_fifo.mp_fifo     ),
