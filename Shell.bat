@@ -1,0 +1,1 @@
+C:\Xilinx\Vivado/2023.2\bin\vivado.bat -mode tcl
